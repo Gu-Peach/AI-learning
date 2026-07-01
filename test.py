@@ -1,23 +1,15 @@
 import time
-import random
-import multiprocessing
+import threading
 
-# 间隔随机时间向queue中放入随机数
-def func1(queue):
+def func():
+  flag = 0
   while True:
-    queue.put(random.randint(1, 50))
-    time.sleep(random.random())
-
-# 从queue中取出数据
-def func2(queue):
-  while True:
-    print("=" * queue.get())
+    print(threading.current_thread().name, f"{flag}" * 5)
+    flag = flag ^ 1 # 替换0和1
+    time.sleep(0.5)
 
 if __name__ == "__main__":
-  queue = multiprocessing.Queue()
-  p1 = multiprocessing.Process(target=func1, args=(queue,))
-  p2 = multiprocessing.Process(target=func2, args=(queue,))
-  p1.start()
-  p2.start()
-  p1.join()
-  p2.join()
+  t1 = threading.Thread(target=func, name="线程1")
+  t2 = threading.Thread(target=func, name="线程2")
+  t1.start()
+  t2.start()
